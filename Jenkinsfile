@@ -9,20 +9,29 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Clean Old Containers') {
             steps {
-                echo 'Building project...'
-                sh'''
-                docker-compose up -d --build
+                sh '''
+                echo "Stopping and removing old containers..."
+                docker compose down -v || true
                 '''
             }
         }
 
-        stage('Deploy') {
+        stage('Build & Deploy') {
             steps {
-                echo 'Deploying application...'
-                sh'''
-                 docker ps -a
+                echo 'Building and deploying project...'
+                sh '''
+                docker compose up -d --build
+                '''
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                echo 'Checking running containers...'
+                sh '''
+                docker ps -a
                 '''
             }
         }
