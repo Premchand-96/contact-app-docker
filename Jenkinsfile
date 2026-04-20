@@ -12,18 +12,18 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building project...'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
+                sh'''
+                docker-compose up -d --build
+                '''
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Deploying application...'
+                sh'''
+                 docker ps -a
+                '''
             }
         }
     }
