@@ -9,27 +9,14 @@ pipeline {
             }
         }
 
-        stage('Clean Old Containers') {
-            steps {
-                sh '''
-                docker-compose down -v || true
-                '''
-            }
-        }
-
         stage('Build & Deploy') {
             steps {
-                sh '''
-                docker-compose up -d --build
-                '''
-            }
-        }
-
-        stage('Verify') {
-            steps {
-                sh '''
-                docker ps -a
-                '''
+                dir('contact-app-docker') {
+                    sh '''
+                    docker-compose down -v || true
+                    docker-compose up -d --build
+                    '''
+                }
             }
         }
     }
