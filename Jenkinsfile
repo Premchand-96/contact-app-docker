@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
-                git 'https://github.com/Premchand-96/contact-app-docker.git'
+                git branch: 'main', url: 'https://github.com/Premchand-96/contact-app-docker.git'
             }
         }
 
