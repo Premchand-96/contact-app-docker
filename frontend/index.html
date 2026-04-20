@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Contact App</title>
+</head>
+<body>
+
+ 
+
+<h1>Contact Book</h1>
+
+ 
+
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<button onclick="addContact()">Add</button>
+
+ 
+
+<ul id="list"></ul>
+
+ 
+
+<script>
+const BASE_URL = "http://51.20.2.108:3000";
+
+async function load(){
+  try {
+    let res = await fetch(BASE_URL + '/contacts');
+    let data = await res.json();
+
+    let html = '';
+    data.forEach(x=>{
+      html += `<li>${x.name} - ${x.phone}
+      <button onclick="del(${x.id})">Delete</button></li>`;
+    });
+
+    document.getElementById('list').innerHTML = html;
+  } catch (err) {
+    console.error("Load error:", err);
+  }
+}
+
+async function addContact(){
+  const name = document.getElementById('name').value;
+  const phone = document.getElementById('phone').value;
+
+  if(!name || !phone){
+    alert("Enter name and phone");
+    return;
+  }
+
+  try {
+    let res = await fetch(BASE_URL + '/contacts',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ name, phone })
+    });
+
+    if(!res.ok){
+      throw new Error("Insert failed");
+    }
+
+    // clear inputs
+    document.getElementById('name').value = '';
+    document.getElementById('phone').value = '';
+
+    load();
+  } catch (err) {
+    console.error("Insert error:", err);
+    alert("Failed to insert");
+  }
+}
+
+async function del(id){
+  try {
+    await fetch(BASE_URL + '/contacts/' + id,{
+      method:'DELETE'
+    });
+    load();
+  } catch (err) {
+    console.error("Delete error:", err);
+  }
+}
+
+load();
+</script>
+ 
+
+</body>
+</html>
