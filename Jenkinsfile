@@ -12,24 +12,21 @@ pipeline {
         stage('Clean Old Containers') {
             steps {
                 sh '''
-                echo "Stopping and removing old containers..."
-                docker compose down -v || true
+                docker-compose down -v || true
                 '''
             }
         }
 
         stage('Build & Deploy') {
             steps {
-                echo 'Building and deploying project...'
                 sh '''
-                docker compose up -d --build
+                docker-compose up -d --build
                 '''
             }
         }
 
-        stage('Verify Deployment') {
+        stage('Verify') {
             steps {
-                echo 'Checking running containers...'
                 sh '''
                 docker ps -a
                 '''
