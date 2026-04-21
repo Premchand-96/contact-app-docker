@@ -5,7 +5,7 @@ pipeline {
         stage('Deploy Website') {
             steps {
                 // 1. Pull the latest code from GitHub
-                git branch: 'main', url: 'https://github.com/Premchand-96/static-website.git'
+                git branch: 'main', url: 'https://github.com/Premchand-96/contact-app-docker.git'
                 
                 // 2. Run all deployment commands in one block
                 sh '''
@@ -31,7 +31,7 @@ pipeline {
 
     post {
         success {
-            echo "CI/CD Completed! Check http://13.53.40.0"
+            echo "CI/CD Completed! Check http://13.60.247.100"
         }
         failure {
             echo "CI/CD Failed. Check the Console Output below for the specific error."
