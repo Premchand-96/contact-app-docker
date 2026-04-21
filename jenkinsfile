@@ -1,29 +1,25 @@
 pipeline {
     agent any
 
+    environment {
+        S3_BUCKET = 'contact-app-frontend-vicky'
+        AWS_DEFAULT_REGION = 'eu-north-1'
+    }
+
     stages {
-        stage('Deploy Website') {
+        stage('Checkout Code') {
             steps {
-                // 1. Pull the latest code from GitHub
                 git branch: 'main', url: 'https://github.com/Premchand-96/contact-app-docker.git'
-                
-                // 2. Run all deployment commands in one block
+            }
+        }
+
+        stage('Deploy index.html to S3') {
+            steps {
                 sh '''
-                # Move to workspace to be certain
                 cd ${WORKSPACE}
 
-                # Clear out the Apache folder
-                sudo rm -rf /var/www/html/*
-                
-                # Copy files directly (not the folder, but the contents)
-                sudo cp -r . /var/www/html/
-                
-                # Set permissions so the web server can read the files
-                sudo chown -R apache:apache /var/www/html
-                sudo chmod -R 755 /var/www/html
-                
-                # Restart Apache to refresh
-                sudo systemctl restart httpd
+                # Upload ONLY index.html
+                aws s3 cp frontend/index.html s3://$S3_BUCKET/index.html --region $AWS_DEFAULT_REGION
                 '''
             }
         }
@@ -31,10 +27,11 @@ pipeline {
 
     post {
         success {
-            echo "CI/CD Completed! Check http://13.60.247.100"
+            echo "index.html deployed successfully!"
+            echo "Check: http://contact-app-frontend-vicky.s3-website-eu-north-1.amazonaws.com"
         }
         failure {
-            echo "CI/CD Failed. Check the Console Output below for the specific error."
+            echo "Deployment failed. Check logs."
         }
     }
 }
